@@ -1,0 +1,7 @@
+Rollout algorithms for discrete optimization: a survey一文是对于rollout算法的简述,指出了rollout算法的具体实现过程理论依据以及其对于其启发算法的比较.
+    Rollout algorithms for stochastic scheduling problems一文给出了rollout算法应用于具体的随机安排问题的解决方案,讲述了讲实际问题进行概率抽象,以及结合rollout算法的实际过程.
+    Average-case performance of rollout algorithms for knapsack problems一文分析了两种 Rollout 算法,分别是 consecutive rollout 和 exhaustive rollout算法,并且对这两种算法与贪心算法进行比较,计算其边界值.
+    Sensor scheduling for target tracking: A Monte Carlo sampling approach一文将传感器调度问题抽象为一个 POMDP 问题,并且将例子滤波与 Rollout算法进行结合,实现了对于单目标单传感器的调度问题.
+    Approximate stochastic dynamic programming for sensor scheduling to track multiple targets一文研究得出了一种非短视的多传感多目标的传感器器调度算法,最终根据完全可测的 Rollout 算法进行决策.
+    Probabilistic robotics一书对于各种滤波算法进行了详尽的讲解,其中的粒子滤波被用于进行传感器调度.
+Foundations and applications of sensor management一书详细讲解了传感器的问题,对于传感器调度过程中的一些参数或者基本方程进行了详细的介绍以及推导.
