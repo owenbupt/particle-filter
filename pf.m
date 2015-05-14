@@ -101,8 +101,11 @@ for k = 1:K-1
 end
 % plot(x_target(:, 1), y_target(:, 1));
 
-
+%%
 % Initialization
+% there is some problems in this part, the particles are not genearated by
+% random,
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ao jiao de fen ge xian%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 weight_kp = ones(K, N);
 for p = 1:N
     for i = 1:T
@@ -114,12 +117,15 @@ end
 for k = 2:K
 
 % Prediction
-    temp = zeros(4, T);
-    for i = 1:T
-        temp(:, i) = S_kpi(k - 1, p, i, :);
-    end
-    for i = 1:T
-        S_kpi(k, p, i, :) = [1 Ts 0 0; 0 1 0 0; 0 0 1 Ts; 0 0 0 1]*temp(:, i) + [Ts^2 / 2, 0; Ts, 0; 0, Ts^2 / 2; 0 Ts] * [vx(i); vy(i)];
+    for p = 1:N
+        temp = zeros(4, T);
+        for i = 1:T
+            temp(:, i) = S_kpi(k - 1, p, i, :);
+        end
+        for i = 1:T
+            S_kpi(k, p, i, :) = [1 Ts 0 0; 0 1 0 0; 0 0 1 Ts; 0 0 0 1]*temp(:, i) + [Ts^2 / 2, 0; Ts, 0; 0, Ts^2 / 2; 0 Ts] * [vx(i); vy(i)];
+        end
+
     end
 
 % Weight update
@@ -128,7 +134,7 @@ for k = 2:K
     end
     for p = 1:N
         for m = 1:M
-            weight_pmk = weight_cal(x_target_hat, y_target_hat, vx_target_hat, vy_target_hat, x_sen, y_sen, p, m, k, Qr, Qtheta, Qrdot, T, Hy, M, false_rate_beta, Pd, K);
+            weight_pmk = weight_cal(S_kpi, x_sen, y_sen, p, m, k, Qr, Qtheta, Qrdot, T, Hy, M, false_rate_beta, Pd, K);
             weight_kp(k, p) = weight_kp(k, p) * weight_pmk;
         end
     end
