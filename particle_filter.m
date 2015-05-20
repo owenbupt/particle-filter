@@ -175,7 +175,7 @@ function [] = particle_filter()
         t = 0;
         for i = 1:N_hm
             for j = 1:N_hm
-                if i != j
+                if i ~= j
                     Hl(1, t) = i;
                     Hl(2, t) = j;
                     t = t + 1;
@@ -193,7 +193,7 @@ function [] = particle_filter()
                 sigma_theta_i = Qtheta * r_im_4;
                 dm(i) = ((r_hat(m, i) - Hy(Hl(i, l), 1)) / sigma_r_i)^2 + ((theta_hat(m, i) - Hy(Hl(i, l), 2)) / sigma_theta_i)^2 + ((rdot_hat(m, i) - Hy(Hl(i, l), 3)) / sigma_rdot_i)^2;
                 em(i) = (exp(-dm(i) / 2)) / (sqrt((2*pi)^3) * sigma_r_i * sigma_theta_i * sigma_rdot_i);
-                if Hy(Hl(i, l), :) != [0 0 0]
+                if Hy(Hl(i, l), :) ~= [0 0 0]
                     weight_l = weight_l * em(i);
                 end
             end
