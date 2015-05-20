@@ -14,6 +14,7 @@
 # rollout算法研究
 ## consecutive rollout
 - 算法思路
+
 - 边界分析
 
 ## exhaustive rollout
@@ -27,4 +28,6 @@
 ## 误差来源
 
 # POMDP建模
+## 具体过程
+## 联合密度分布
 # 仿真实验结果

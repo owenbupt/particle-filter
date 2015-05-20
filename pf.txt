@@ -1,0 +1,195 @@
+4.2 THE PARTICLE FILTER
+4.2.1 Basic Algorithm The particle filter is an alternative nonparametric implementation of the Bayes filter. Just like histogram filters, particle filters approximate the posterior by a finite number of parameters. However, they differ in the way these parameters are generated, and in which they populate the state space. The key idea of the particle filter is to represent the posterior bel(xt) by a set of random state samples drawn from this posterior. Fig- ure ?? illustrates this idea for a Gaussian. Instead of representing the distribution by a parametric form (the exponential function that defines the density of a normal dis- tribution), particle filters represent a distribution by a set of samples drawn from this distribution. Such a representation is approximate, but it is nonparametric, and there- fore can represent a much broader space of distributions than, for example, Gaussians.
+In particle filters, the samples of a posterior distribution are called particles and are denoted
+Xt := x[1] t ,x[2] t , . . . ,x[M] t (4.22) Each particle x[m] t (with 1 ≤ m ≤M) is a concrete instantiation of the state at time t, that is, a hypothesis as to what the true world state may be at time t. HereM denotes
+
+1: 2: 3:
+4: 5: 6:
+7: 8:
+9:
+10: 11: 12:
+Algorithm Particle filter(Xt−1,ut, zt):
+Xt = Xt = ∅
+¯
+form = 1 toM do sample x[m]
+t ∼ p(xt | ut,x[m]
+t−1)
+w[m]
+t = p(zt | x[m]
+t )
+Xt = ¯ ¯
+Xt +?x[m]
+t ,w[m] t ? endfor form = 1 toM do
+draw i with probability ∝ w[i]
+t
+add x[i]
+t to Xt endfor return Xt
+Table 4.3 The particle filter algorithm, a variant of the Bayes filter based on importance sampling.
+
+the number of particles in the particle set Xt. In practice, the number of particlesM is often a large number, e.g.,M = 1, 000. In some implementationsM is a function
+of t or of other quantities related to the belief bel(xt).
+The intuition behind particle filters is to approximate the belief bel(xt) by the set of particles Xt. Ideally, the likelihood for a state hypothesis xt to be included in the particle set Xt shall be proportional to its Bayes filter posterior bel(xt):
+x[m] t ∼ p(xt | z1:t,u1:t) (4.23)
+As a consequence of (4.23), the denser a subregion of the state space is populated by samples, the more likely it is that the true state falls into this region. As we will discuss
+below, the property (4.23) holds only asymptotically for M ↑ ∞ for the standard particle filter algorithm. For finite M, particles are drawn from a slightly different distribution. In practice, this difference is negligible as long as the number of particles is not too small (e.g.,M ≥ 100).
+Just like all other Bayes filter algorithms discussed thus far, the particle filter algo-
+rithm constructs the belief bel(xt) recursively from the belief bel(xt−1) one time step earlier. Since beliefs are represented by sets of particles, this means that particle filters construct the particle set Xt recursively from the set Xt−1. The most basic variant of the particle filter algorithm is stated in Table 4.3. The input of this algorithm is
+the particle set Xt−1, along with the most recent control ut and the most recent mea- surement zt. The algorithm then first constructs a temporary particle set ¯
+X which is
+reminiscent (but not equivalent) to the belief bel(xt). It does this by systematically processing each particle x[m]
+t−1 in the input particle set Xt−1 as follows. 1. Line 4 generates a hypothetical state x[m] t for time t based on the particle x[m] t−1 and the control ut. The resulting sample is indexed by m, indicating that it is
+generated from the m-th particle in Xt−1. This step involves sampling from the next state distribution p(xt | ut,xt−1). To implement this step, one needs to be able to sample from p(xt | ut,xt−1). The ability to sample from the state transition probability is not given for arbitrary distributions p(xt | ut,xt−1). However, many major distributions in this book possess efficient algorithms for
+generating samples. The set of particles resulting from iterating Step 4M times is the filter’s representation of bel(xt).
+2. Line 5 calculates for each particle x[m]
+t the so-called importance factor, denoted
+w[m]
+t
+. Importance factors are used to incorporate the measurement zt into the
+particle set. The importance, thus, is the probability of the measurement zt under the particle x[m]
+t
+, that is, w[m]
+t = p(zt | x[m] t ). If we interpret w[m] t as the weight
+of a particle, the set of weighted particles represents (in approximation) the Bayes filter posterior bel(xt).
+3. The real “trick” of the particle filter algorithm occurs in Lines 8 through 11 in Ta- ble 4.3. These lines implemented what is known as resampling or importance re- sampling. The algorithm draws with replacementM particles from the temporary set ¯
+Xt. The probability of drawing each particle is given by its importance weight. Resampling transforms a particle set ofM particles into another particle set of the
+same size. By incorporating the importance weights into the resampling process, the distribution of the particles change: whereas before the resampling step, they were distribution according to bel(xt), after the resampling they are distributed (approximately) according to the posterior bel(xt) = η p(zt | x[m]
+t )bel(xt). In
+fact, the resulting sample set usually possesses many duplicates, since particles are drawn with replacement. More important are the particles that are not con- tained in Xt: those tend to be the particles with lower importance weights.
+The resampling step has the important function to force particles back to the posterior
+bel(xt). In fact, an alternative (and usually inferior) version of the particle filter would never resample, but instead would maintain for each particle an importance weight
+that is initialized by 1 and updated multiplicatively: w[m]
+t = p(zt | x[m] t ) w[m] t−1 (4.24)
+Such a particle filter algorithm would still approximate the posterior, but many of its particles would end up in regions of low posterior probability. As a result, it would require many more particles; how many depends on the shape of the posterior. The resampling step is a probabilistic implementation of the Darwinian idea of survival of the fittest: It refocuses the particle set to regions in state space with high posterior probability. By doing so, it focuses the computational resources of the filter algorithm to regions in the state space where they matter the most.
+4.2.2 Importance Sampling
+For the derivation of the particle filter, it shall prove useful to discuss the resampling step in more detail. Figure 4.2 illustrates the intuition behind the resampling step. Figure 4.2a shows a density function f of a probability distribution called the target distribution. What we would like to achieve is to obtain a sample from f. However, sampling from f directly may not be possible. Instead, we can generate particles from a related density, labeled g in Figure 4.2b. The distribution that corresponds to the density g is called proposal distribution. The density g must be such that f(x) > 0 implies g(x) > 0, so that there is a non-zero probability to generate a particle when sampling from g for any state that might be generated by sampling from f. However, the resulting particle set, shown at the bottom of Figure 4.2b, is distributed according
+to g, not to f. In particular, for any interval A ⊆ range(X) (or more generally, any Borel set A) the empirical count of particles that fall into A converges to the integral of g under A:
+M 1
+?
+M I(x[m] ∈ A) −→
+m=1
+? g(x) dx A (4.25) To offset this difference between f and g, particles x[m] are weighted by the quotient
+w[m] = f(x[m]) g(x[m])
+(4.26)98
+This is illustrated by Figure 4.2c: The vertical bars in this figure indicate the magnitude of the importance weights. Importance weights are the non-normalized probability mass of each particle. In particular, we have
+? M
+?−1 M
+?
+w[m]
+?
+I(x[m] ∈ A) w[m] −→ m=1 m=1 ? f(x) dx A (4.27)
+where the first term serves as the normalizer for all importance weights. In other words, even though we generated the particles from the density g, the appropriately weighted particles converge to the density f.
+The specific convergence involves an integration over a set A. Clearly, a particle set represents a discrete distribution, whereas f is continuous in our example. Because of this, there is no density that could be associated with a set of particles. The con- vergence, thus, is over the cumulative distribution function of f, not the density itself (hence the integration over A). A nice property of importance sampling is that it con- verges to the true density if g(x) > 0 whenever f(x) > 0. In most cases, the rate of
+convergence is in O( 1√M), where M is the number of samples. The constant factor depends on the similarity of f(s) and g(s).
+In particle filters, the density f corresponds to the target belief bel(xt). Under the (asymptotically correct) assumption that the particles inXt−1 are distributed according to bel(xt−1), the density g corresponds to the product distribution:
+p(xt | ut,xt−1) bel(xt−1) This distribution is called the proposal distribution. (4.28) 4.2.3 Mathematical Derivation of the PF
+To derive particle filters mathematically, it shall prove useful to think of particles as samples of state sequences x[m]
+0:t = x[m] 0 ,x[m] 1 , . . . ,x[m] t (4.29)
+It is easy to modify the algorithm accordingly: Simply append to the particle x[m]
+t
+the sequence of state samples from which it was generated x[m]
+0:t−1. This particle filter
+calculates the posterior over all state sequences: bel(x0:t) = p(x0:t | u1:t, z1:t)
+(4.30)
+instead of the belief bel(xt) = p(xt | u1:t, z1:t). Admittedly, the space over all state sequences is huge, and covering it with particles is usually plainly infeasible. How-
+ever, this shall not deter us here, as this definition serves only as the means to derive the particle filter algorithm in Table 4.2.
+The posterior bel(x0:t) is obtained analogously to the derivation of bel(xt) in Sec- tion 2.4.3. In particular, we have
+p(x0:t | z1:t,u1:t) Bayes= η p(zt | x0:t, z1:t−1,u1:t) p(x0:t | z1:t−1,u1:t) Markov= η p(zt | xt) p(x0:t | z1:t−1,u1:t)
+= η p(zt | xt) p(xt | x0:t−1, z1:t−1,u1:t) p(x0:t−1 | z1:t−1,u1:t) Markov= η p(zt | xt) p(xt | xt−1,ut) p(x0:t−1 | z1:t−1,u1:t−1)
+(4.31)
+Notice the absence of integral signs in this derivation, which is the result of maintain- ing all states in the posterior, not just the most recent one as in Section 2.4.3.
+The derivation is now carried out by induction. The initial condition is trivial to verify,
+assuming that our first particle set is obtained by sampling the prior p(x0). Let us assume that the particle set at time t−1 is distributed according to bel(x0:t−1). For the m-th particle x[m]
+0:t−1 in this set, the sample x[m] t generated in Step 4 of our algorithm is generated from the proposal distribution:
+p(xt | xt−1,ut) bel(x0:t−1) = p(xt | xt−1,ut) p(x0:t−1 | z0:t−1,u0:t−1)
+With w[m] t = target distribution proposal distribution
+= η p(zt | xt) p(xt | xt−1,ut) p(x0:t−1 | z1:t−1,u1:t−1) p(xt | xt−1,ut) p(x0:t−1 | z0:t−1,u0:t−1)
+= η p(zt | xt) (4.32) (4.33)
+The constant η plays no role since the resampling takes place with probabilities pro- portional to the importance weights. By resampling particles with probability propor-
+tional to w[m]
+, the resulting particles are indeed distributed according to the product
+t of the proposal and the importance weights w[m]
+:
+t η w[m] t p(xt | xt−1,ut) p(x0:t−1 | z0:t−1,u0:t−1) = bel(x0:t) (4.34)
+(Notice that the constant factor η here differs from the one in (4.33).) The algorithm in Table 4.2 follows now from the simple observation that if x[m]
+0:t is distributed according
+to bel(x0:t), then the state sample x[m]
+t is (trivially) distributed according to bel(xt).
+As we will argue below, this derivation is only correct forM −→∞, due to a laxness in our consideration of the normalization constants. However, even for finite M it
+explains the intuition behind the particle filter.
+4.2.4 Properties of the Particle Filter
+Particle filters are approximate and as such subject to approximation errors. There are four complimentary sources of approximation error, each of which gives rise to improved versions of the particle filter.
+1. The first approximation error relates to the fact that only finitely many particles are used. This artifact introduces a systematic bias in the posterior estimate. To see, consider the extreme case of M = 1 particle. In this case, the loop in Lines 3 through 7 in Table 4.3 will only be executed once, and ¯
+Xt will contain
+only a single particle, sampled from the motion model. The key insight is that the resampling step (Lines 8 through 11 in Table 4.3) will now deterministically
+accept this sample, regardless of its importance factor w[m]
+. Put differently, the t
+measurement probability p(zt | x[m]
+t ) plays no role in the result of the update,
+and neither does zt. Thus, if M = 1, the particle filter generates particles from the probability
+p(xt | u1:t) (4.35)
+instead of the desired posterior p(xt | u1:t, z1:t). It flatly ignores all measure- ments. How can this happen?
+The culprit is the normalization, implicit in the resampling step. When sampling in proportion to the importance weights (Line 9 of the algorithm), w[m]
+t becomes
+its own normalizer ifM = 1: p(draw x[m]
+in Line 9) = w[m] t
+t w[m] = 1 t (4.36)
+In general, the problem is that the non-normalized values wt[m] are drawn from anM-dimensional space, but after normalization they reside in a space of dimen-
+sionM−1. This is because after normalization, them-th weight can be recovered from theM−1 other weights by subtracting those from 1. Fortunately, for larger values ofM, the effect of loss of dimensionality, or degrees of freedom, becomes less and less pronounced.
+2. A second source of error in the particle filter relates to the randomness intro- duced in the resampling phase. To understand this error, it will once again be useful to consider the extreme case, which is that of a robot whose state does not
+change. Sometimes, we know for a fact that xt = xt−1. A good example is that of mobile robot localization, for a non-moving robot. Let us furthermore assume that the robot possesses no sensors, hence it cannot estimate the state, and that
+it is unaware of the state. Initially, our particle set X0 will be generated from the prior; hence particles will be spread throughout the state space. The random nature of the resampling step (Line 8 in the algorithm) will regularly fail to draw a state sample x[m]. However, since our state transition is deterministic, no new states will be introduced in the forward sampling step (Line 4). The result is quite daunting: With probability one,M identical copies of a single state will survive; the diversity will disappear due to the repetitive resampling. To an outside ob- server, it may appear that the robot has uniquely determined the world state—an apparent contradiction to the fact that the robot possesses no sensors.
+This example hints at an important limitation of particle filters with immense practical ramifications. In particular, the resampling process induces a loss of di- versity in the particle population, which in fact manifests itself as approximation error. Such error is called variance of the estimator: Even though the variance of the particle set itself decreases, the variance of the particle set as an estimator of the true belief increases. Controlling this variance, or error, of the particle filter is essential for any practical implementation.
+There exist two major strategies for variance reduction. First, one may reduce the frequency at which resampling takes place. When the state is known to be static
+(xt = xt−1) one should never resample. This is the case, for example, in mobile robot localization: When the robot stops, resampling should be suspended (and in fact it is usually a good idea to suspend the integration of measurements as well). Even if the state changes, it is often a good idea to reduce the frequency of resampling. Multiple measurements can always be integrated via multiplicatively
+1: 2: 3:
+4: 5: 6: 7: 8: 9:
+10: 11:
+12: 13: 14:
+Algorithm Low variance sampler(Xt,Wt):
+Xt = ∅
+¯
+r = rand(0;M−1) c = w[1]
+t i = 1 form = 1 toM do
+u = r +(m−1) ·M−1 while u > c
+i = i+1 c = c+w[i] t
+endwhile add x[i]
+t to ¯ Xt endfor return ¯ Xt
+Table 4.4 Low variance resampling for the particle filter. This routine uses a single ran- dom number to sample from the particle setX with associated weightsW, yet the probabil- ity of a particle to be resampled is still proportional to its weight. Furthermore, the sampler is efficient: SamplingM particles requires O(M) time.
+updating the importance factor as noted above. More specifically, it maintains the importance weight in memory and updates them as follows:
+w[m] t = ? 1 if resampling took place p(zt | x[m] t ) w[m] t−1 if no resampling took place (4.37)
+The choice of when to resample is intricate and requires practical experience: Resampling too often increases the risk of losing diversity. If one samples too infrequently, many samples might be wasted in regions of low probability. A standard approach to determining whether or not resampling should be performed is to measure the variance of the importance weights. The variance of the weights relates to the efficiency of the sample based representation. If all weights are identical, then the variance is zero and no resampling should be performed. If, on the other hand, the weights are concentrated on a small number of samples, then the weight variance is high and resampling should be performed.
+The second strategy for reducing the sampling error is known as low variance sampling. Table 4.4 depicts an implementation of a low variance sampler. The basic idea is that instead of selecting samples independently of each other in the resampling process (as is the case for the basic particle filter in Table 4.3), the selection involves a sequential stochastic process.
+Instead of choosingM random numbers and selecting those particles that corre- spond to these random numbers, this algorithm computes a single random number and selects samples according to this number but still with a probability propor- tional to the sample weight. This is achieved by drawing a random number r in the interval [0;M−1[, whereM is the number of samples to be drawn at time t. The algorithm in Table 4.4 then selects particles by repeatedly adding the fixed amountM−1 to r and by choosing the particle that corresponds to the resulting number. Any number u in [0; 1] points to exactly one particle, namely the particle i for which
+j
+i = argmin
+?
+w[m] t ≥ u
+j
+m=1
+(4.38)
+The while loop in Table 4.4 serves two tasks, it computes the sum in the right- hand side of this equation and additionally checks whether i is the index of the first particle such that the corresponding sum of weights exceeds u. The selection is then carried out in Line 12. This process is also illustrated in Figure 4.3.
+The advantage of the low-variance sampler is threefold. First, it covers the space of samples in a more systematic fashion than the independent random sampler. This should be obvious from the fact that the dependent sampler cycles through all particles systematically, rather than choosing them independently at random. Second, if all the samples have the same importance factors, the resulting sam- ple set ¯
+Xt is equivalent to Xt so that no samples are lost if we resample without
+having integrated an observation into Xt. Third, the low-variance sampler has
+a complexity of O(M). Achieving the same complexity for independent sam-
+pling is difficult; obvious implementations require a O(logM) search for each particle once a random number has been drawn, which results in a complexity of O(MlogM) for the entire resampling process. Computation time is of essence when using particle filters, and often an efficient implementation of the resam- pling process can make a huge difference in the practical performance. For these reasons, most implementations of particle filters in robotics tend to rely on mech- anisms like the one just discussed.
+In general, the literature on efficient sampling is huge. Another popular option is stratified sampling, in which particles are grouped into subsets. The number of samples in each subset can be kept the same over time, regardless of the total weight of the particles contained in each subset. Such techniques tend to perform well when a robot tracks multiple, distinct hypotheses with a single particle filter.
+3. A third source of error pertains to the divergence of the proposal and target dis- tribution. We already hinted at the problem above, when discussing importance sampling. In essence, particles are generated from a proposal distribution that does not consider the measurement (cf., Equation (4.28)). The target distribution, which is the familiar Bayes filter posterior, depends of course on the measure- ment. The efficiency of the particle filter relies crucially on the ’match’ between the proposal and the target distribution. If, at one extreme, the sensors of the robot are highly inaccurate but its motion is very accurate, the target distribution will be similar to the proposal distribution and the particle filter will be efficient. If, on the other hand, the sensors are highly accurate but the motion is not, these distributions can deviate substantially and the resulting particle filter can become arbitrarily inefficient. An extreme example of this would be a robot with deter- ministic sensors. For most deterministic sensors, the support of the measurement
+probability p(z | x) will be limited to a submanifold of the state space. For ex- ample, consider a mobile robot that performs localization with noise-free range
+sensors. Clearly, p(z | x) will be zero for almost every state x, with the ex- ceptions of those that match the range measurement z exactly. Such a situation
+can be fatal: the proposal distribution will practically never generate a sample x which exactly corresponds to the range measurement z. Thus, all importance weights will be zero with probability one, and the resampling step becomes ill-
+conditioned. More generally, if p(z | x) is degenerate, meaning that its support is restricted to a manifold of a smaller dimension than the dimension of the state space, the plain particle filter algorithm is inapplicable.
+There exist a range of techniques for overcoming this problem. One simple- minded technique is to simply assume more noise in perception than there actu-
+ally is. For example, one might use a measurement model p(z | x) that overes- timates the actual noise in the range measurements. In many implementations, such a step improves the accuracy of the particle filter—despite the oddity of using a knowingly incorrect measurement probability. Other techniques involve modifications of the proposal distribution in ways that incorporate the measure- ment. Such techniques will be discussed in later chapters of this book.
+4. A fourth and final disadvantage of the particle filter is known as the particle de- privation problem. When performing estimation in a high-dimensional space,there may be no particles in the vicinity to the correct state. This might be be- cause the number of particles is too small to cover all relevant regions with high likelihood. However, one might argue that this ultimately must happen in any particle filter, regardless of the particle set sizeM. Particle deprivation occurs as the result of random resampling; an unlucky series of random numbers can wipe out all particles near the true state. At each resampling step, the probability for this to happen is larger than zero (although it is usually exponentially small in M). Thus, we only have to run the particle filter long enough. Eventually, we will generate an estimate that is arbitrarily incorrect.
+In practice, problems of this nature only tend to arise when M is small relative to the space of all states with high likelihood. A popular solution to this prob- lem is to add a small number of randomly generated particles into the set after each resampling process, regardless of the actual sequence of motion and mea- surement commands. Such a methodology can reduce (but not fix) the particle deprivation problem, but at the expense of an incorrect posterior estimate. The advantage of adding random samples lies in its simplicity: The software mod- ification necessary to add random samples in a particle filter is minimal. As a rule of thumb, adding random samples should be considered a measure of last re- sort, which should only be applied if all other techniques for fixing a deprivation problem have failed.
+
+This discussion showed that the quality of the sample based representation increases with the number of samples. An important question is therefore how many samples should be used for a specific estimation problem. Unfortunately, there is no perfect answer to this question and it is often left to the user to determine the required number of samples. As a rule of thumb, the number of samples strongly depends on the di- mensionality of the state space and the uncertainty of the distributions approximated by the particle filter. For example, uniform distributions require many more samples than distributions focused on a small region of the state space. A more detailed dis- cussion on sample sizes will be given in the context of robot localization, when we consider adaptive particle filters (see Section ??).
+4.3 SUMMARY
+This section introduced two nonparametric Bayes filters, histogram filters and particle filters. Nonparametric filters approximate the posterior by a finite number of values. Under mild assumptions on the system model and the shape of the posterior, both have the property that the approximation error converges uniformly to zero as the the number of values used to represent the posterior goes to infinity.
+The histogram filter decomposes the state space into finitely many convex re- gions. It represents the cumulative posterior probability of each region by a single numerical value.
+There exist many decomposition techniques in robotics. In particular, the granu- larity of a decomposition may or may not depend on the structure of the environ- ment. When it does, the resulting algorithms are often called “topological.”
+Decomposition techniques can be divided into static and dynamic. Static decom- positions are made in advance, irrespective of the shape of the belief. Dynamic decompositions rely on specifics of the robot’s belief when decomposing the state space, often attempting to increase spatial resolution in proportion to the poste- rior probability. Dynamic decompositions tend to give better results, but they are also more difficult to implement.
+An alternative nonparametric technique is known as particle filter. Particle filters represent posteriors by a random sample of states, drawn from the posterior. Such samples are called particles. Particle filter are extremely easy to implement, and they are the most versatile of all Bayes filter algorithms represented in this book.
+Specific strategies exist to reduce the error in particle filters. Among the most popular ones are techniques for reducing the variance of the estimate that arises from the randomness of the algorithm, and techniques for adapting the number of particles in accordance with the complexity of the posterior.
+The filter algorithms discussed in this and the previous chapter lay the groundwork for most probabilistic robotics algorithms discussed throughout the remainder of this book. The material presented here represents many of today’s most popular algorithms and representations in probabilistic robotics.

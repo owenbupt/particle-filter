@@ -1,0 +1,142 @@
+---------laizi PROBABILISTIC ROBOTICS--------------------
+
+Let us now shift focus to the partially observable problem. The algorithms discussed thus far only address uncertainty in action effects, but they assume that the state of the world can be determined with certainty. For fully observable Markov decision processes, we devised a value iteration algoithm for controlling robots in stochastic domains. We will now be interested in the more general case where the state is not fully observable. Lack of observability means that the robot can only estimate a pos- terior distribution over possible world state, which we refer to as the belief b. This setting is known as Partially Observable Markov Decision Processes, or POMDPs.
+The central question addressed in the remainder of this chapter is the following: Can we devise planning and control algorithms for POMDPs? The answer is positive, but with caveats. Algorithms for finding the optimal policy only exist for finite worlds, where the state space, the action space, the space of observations, and the planmning horizon T are all finite. Unfortunately, these exact methods are computationally ex- tremely complex. For the more interesting continous case, the best known algorihms are all approximative.
+The previous section derived a value iteration algorithm for POMDPs in finite worlds. In particular, this algorithm requires finite numbers of states, observations, and actions, and it also requires a finite horizon T.
+[...]
+There are still terms in (16.35) that require further consideration. First, the immediate payoff function c has thus far only been defined over states. Here we need to calculate it for belief distributions. The payoff of a belief b is simply the expectation of the per-state payoff c(s) under the belief b(s): c(b) = Eb[c] = ? c(s) b(s) ds
+(16.69)
+It might seem odd that the payoff depends on the robot’s belief. However, the robot’s belief represents the true posterior over world states, which justifies the expectation.
+Second, we need to derive an expression for the probability P(o?|a, b), which is the distribution of observations o? one might receive after executing b in a state distributed
+according to b. Deriving this expression is a straightforward mathematical exercise. In particular, let us first integrate over the state s? at which the observation o? is made:
+P(o?|a, b) = ? P(o?|a, b, s?) P(s?|a, b) ds? (16.70)
+Thus, s? refers to the state after action execution. As usual, we exploit the Markov property to simplify this expression
+= ? P(o?|s?) P(s?|a, b) ds? (16.71)
+If we now integrate over states s before action execution:
+= ? P(o?|s?) ? P(s?|a, b, s) P(s|a, b) ds ds?
+(16.72)
+we obtain the simplified term = ? P(o?|s?) ? P(s?|a, s) b(s) ds ds?
+(16.73)
+Armed with the necessary expression, we can now return to the original question of how to perform value iteration in belief space and give a concrete algorithm. In partic- ular, let us substitute (16.73) back into (16.34), which leads to the following recursive
+definition of the value function in belief space:
+CT (b) = max
+? ??CT−1(B(b, a, o?))+? c(s?) B(b, a, o?)(s?) ds??
+a
+? P(o?|s?) ? P(s?|a, s) b(s) ds ds?? do?
+(16.74)
+This recursive definition defines the optimal value function for any finite horizon T. The optimal value function for infinite horizons is chacterized by Bellman’s equation:
+C∞(b) = max
+? ??C∞(B(b, a, o?))+? c(s?) B(b, a, o?)(s?) ds??
+a
+? P(o?|s?) ? P(s?|a, s) b(s) ds ds?? do?
+(16.75) As in the MDP case, value iteration approximates C∞(b) using a function ˆ C by repet-
+itively applying this update equation. The central value iteration algorithm is therefore as follows:
+C(b) ←− max ˆ ? ?? ˆ
+C(B(b, a, o?))+? c(s?) B(b, a, o?)(s?) ds??
+a
+? P(o?|s?) ? P(s?|a, s) b(s) ds ds?? do?
+(16.76)
+This update equation generalizes value iteration to belief spaces. In particular, it pro- vides a way to backup values among belief spaces using the familiar motion model and the familiar perceptual model. The update equation is quite intuitive: The value of a belief b is obtained by maximizing over all actions a. To determine the value of executing action a under the belief b, Equation (16.76) suggests to consider all ob- servations o?. One such an observation is fixed, the posterior belief is calculated via Bayes filtering, and the corresponding value is calculated. Thus, what is missing is a calculation of the probability of measuring o?. In Equation (16.76), this probabilist is obtained by integrating over all states s, all subsequent states s?, and weighing these state combinations by the corresponding probabilities under the belief b and the mo- tion model P(s?|a, s).
+1:
+2: 3:
+4: 5: 6: 7:
+8: 9: 10: Algorithm POMDP(T): for all b do C(b) = 0 ˆ repeatfor until
+con
+v
+er
+all
+b
+do
+gence C∗ = −∞ for all a do Ca = ? ?? ˆ actions
+C(B(b, a, o?))+? c(s?) B(b, a, o?)(s?) ds?? ? P(o?|s?) ? P(s?|a, s) b(s) ds ds?? do?
+if Ca > C∗ C∗ = Ca 11: 12: C(b) = C∗ ˆ return C ˆ
+Table 16.2 The general POMDP algorithm with finite horizon T, where the function B(b, a, o?) is as specified in the text. This version leaves open as to how the value function
+C is represented, and how the integrals in Step 8 are calculated.
+16.3.1 The General POMDP Algorithm
+Table 16.2 depicts a general algorithm for value iteration in belief space. This algo- rithm is only an in-principle algorithm that cannot be implemented on a digital com- puter, since it requires integration over infinite spaces, and lacks a specification as to how the value function ˆ
+C is represented. The algorithm accepts the planning horizon
+T as input, which is assumed to be finite. As in the state-based version of value it- eration, the value function is initialized by 0 (lines 2 and 3 in Table 16.2). Lines 6
+through 11 identify the best action for a belief state b relative to the value function
+C. The central update, in line 8, is equivalent to the argument of the maximization in
+ˆ
+Equation (16.76).
+The most important remaining question concerns the nature of ˆ C. To perform value
+iteration in belief space, we need a way to represent a value function over beliefs. Beliefs are probability distributions. Thus, we need a method for assigning values to probability distributions. This, unfortunately, is a difficult problem that lacks a general solution. As noticed above, belief spaces over continuous state spaces pos- sess infinitely many dimensions, suggesting that the value function is defined over an infinitely-dimensional space. Even for finite state spaces, the value function is defined over a continuum, making it questionable as to whether the optimal value function can be represented on a digital computer. However, it turns out that the value function can be calculated exactly for the important special case of finite problems, in particular, for problems with finite state, action, and observation spaces, and with finite planning horizon. An exact such algorithm will be give in the next section.
+16.4 A MONTE CARLO APPROXIMATION
+Let us now study a concrete algorithm that approximates the general POMDP algo- rithm, and that has shown promise in practical applications. The basic idea is to ap- proximate the belief state using particles, using the particule filter algorithm for calcu- lating beliefs. Particule filters were already extensively discussed in various chapters of this book. They were mathematically derived in Chapter 4.2.1.
+16.4.1 Monte Carlo Backups
+For the sake of completeness, let briefly review the basic update equations. Initially, N random samples are drawn from the initial belief distribution b(0). Then, at time t, a new set of weighted particles is generated.
+Table 16.3 shows a variant of the particle filter algorithm that accepts an action a, an observation o?, and a belief b as input. It then transforms the belief b into a new belief. This algorithm implements the function B(b, a, o?), assuming that belief states are represented by weighted sets of particles. It is trivially obtained from the algorithm particle filter in Table 4.3 on page 4.3 of this book. See Chapter 4.2.1 for a more detailed explanation.
+Armed with B(b, a, o?), the update equation can be implemented using a straight- foward Monte Carlo algorihm. Recall that value function in belief space is defined by 1: 2:
+3: 4: 5: 6: 7:
+8: 9:
+Algorithm particle filter 2(b, a, o?):
+b? = ∅
+do sample
+N
+sample times: ?s, p? from b according to p1, . . . , pN in b s? ∼ P(s?|a, s)
+w? = P(o?|s?)
+normalize
+add
+?s?,w??
+to b?
+return
+all w? ∈ b? b? weights
+Table 16.3 A variant of the particle filter algorithm, which accepts an action a and an observation o? as input.
+the following recusive equation:
+CT (b) = max
+? ??CT−1(B(b, a, o?))+? c(s?) B(b, a, o?)(s?) ds??
+a
+? P(o?|s?) ? P(s?|a, s) b(s) ds ds?? do?
+(16.77)
+Inner projection loop: 1:
+2: 3: 4: 5: 6: 7:
+Algorithm MCPOMDP inner loop(b): CT (b) = −∞
+for all a do do Sample
+CT (b, a) = 0 N
+Sample times s ∼ b s? ∼ P(s?|a, s)
+8: 9:
+10: 11: 12: 13:
+Sample o? ∼ P(o?|s?)
+b? = particle filter 2(b, a, o?) CT (b) = CT (b)+ 1
+N γ[CT−1(b?)+c(s?)] if
+CT (b, a) > CT (b)
+return
+CT (b) = CT (b, a) CT (b)
+Outer McPOMDP loop: 1:
+2: 3:
+4: 5: 6: 7:
+1:
+2: 3:
+4: 5: 6:
+7: 8: 9:
+10: 11: 12:
+Algorithm MCPOMDP outer loop(b): for all b do C(b) = 0 ˆ repeatfor until
+all con
+v er b gence ˆ return C(b) = MCPOMDP inner loop(b) C ˆ
+1:
+2: 3:
+4: 5: 6:
+7: 8: 9:
+10: 11: 12:
+Algorithm MCPOMDP outer loop(b): for all b do C(b) = 0 ˆ repeatfor until
+all con
+v er b gence ˆ return C(b) = MCPOMDP inner loop(b) C ˆ Algorithm MCPOMDP alterative outer loop(b): for all b do C(b) = 0 ˆ repeat until con v er
+b = P(s0)
+gence
+s ∼ P(s0)
+do until trial o v er
+C(b) = MCPOMDP inner loop(b)
+ˆ if
+rand(0, 1) > 0.1
+else select a = argmaxa ˆ C(b, a) a at random 13: 14: 15:
+dra w s? ∼ P(s?|a, s) return s = s? C ˆ
+
+16.6 SUMMARY
+In this section, we introduced three major algorithms for action selection under uncer- tainty.
+The Markov Decision Process (MDP) framework addresses the problem of action selection in situations where the outcomes of actions are stochastic, but the robot knows its state with absolute certainty.
+Value iteration solves discrete MDPs by computing a value function over states. Selecting actions by greedily maximizing value leads to optimal action choices. A key characteristic of value functions is that they induce policies for action selection that are defined over the entire state space. No matter what the outcome of an action is, the robot knows what to do.
+The more general framework of Partially Observable Markov Decision Processes (POMDPs) addresses the question of action selection with imperfect sensors. POMDP algorithms have to base decisions on belief states. Solutions trade off information gathering (exploration) and exploitation.
+Value iteration can also be applied to solve POMDPs. In worlds with finitely many states, actions, and observations, the value function is piecewise linear in the parameters of the belief space. However, in the worst case calculating the value function is doubly exponential in the planning horizon.
+Finally, we introduced the Augmented Markov Decision Process (AMDP) frame- work, which blends MDPs and POMDPs. AMDPs represent the robot’s uncer- tainty by a low-dimensional statistic (e.g., the entropy), opening the door to effi- cient planning algorithms that consider some of the uncertainty in state estima- tion.
+Value iteration was also applied to AMDPS.Within mobile robot navigation, the resulting algorithm is known as coastal navigation, since it navigates robots in a way that minimizes the anticipated uncertainty in localization.
