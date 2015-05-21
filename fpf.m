@@ -1,4 +1,4 @@
-function error = fpf(k, A, S_kpi)
+function [error S_kpi weight_kp] = fpf(k, A, S_kpi, weight_kp)
     %%
     % Define the related parameters
     % Information for the whole
@@ -101,14 +101,15 @@ function error = fpf(k, A, S_kpi)
     % random,
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ao jiao de fen ge xian%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    for p = 1:N
-        for i = 1:T
-            S_kpi(1, p, i, :)= [x_target_hat(1, i) + 0 * randn; vx_target_hat(1, i) + 0 * randn; y_target_hat(1, i) + 0 * randn; vy_target_hat(1, i) + 0 * randn];
+    if k == 1
+        for p = 1:N
+            for i = 1:T
+                S_kpi(1, p, i, :)= [x_target_hat(1, i) + 0 * randn; vx_target_hat(1, i) + 0 * randn; y_target_hat(1, i) + 0 * randn; vy_target_hat(1, i) + 0 * randn];
+            end
+            weight_kp(1, p) = 1 / N;
         end
-        weight_kp(1, p) = 1 / N;
     end
 
-    disp(k);
     % Prediction
     for p = 1:N
         temp = zeros(4, T);
@@ -140,17 +141,23 @@ function error = fpf(k, A, S_kpi)
     end
     for p = 1:N
         for m = 1:M
-            if m == 1
+            if m == 1 && A[1] == 1
                 Hy = Hy1;
-            elseif m == 2
+                weight_pmk = weight_cal(S_kpi, x_sen, y_sen, p, m, k, Qr, Qtheta, Qrdot, T, Hy, false_rate_beta, Pd);
+                weight_kp(k, p) = weight_kp(k, p) * weight_pmk;
+            elseif m == 2 && A[2] == 1
                 Hy = Hy2;
-            elseif m == 3
+                weight_pmk = weight_cal(S_kpi, x_sen, y_sen, p, m, k, Qr, Qtheta, Qrdot, T, Hy, false_rate_beta, Pd);
+                weight_kp(k, p) = weight_kp(k, p) * weight_pmk;
+            elseif m == 3 && A[3] == 1
                 Hy = Hy3;
-            else
+                weight_pmk = weight_cal(S_kpi, x_sen, y_sen, p, m, k, Qr, Qtheta, Qrdot, T, Hy, false_rate_beta, Pd);
+                weight_kp(k, p) = weight_kp(k, p) * weight_pmk;
+            elseif m == 4 && A[4] == 1
                 Hy = Hy4;
+                weight_pmk = weight_cal(S_kpi, x_sen, y_sen, p, m, k, Qr, Qtheta, Qrdot, T, Hy, false_rate_beta, Pd);
+                weight_kp(k, p) = weight_kp(k, p) * weight_pmk;
             end
-            weight_pmk = weight_cal(S_kpi, x_sen, y_sen, p, m, k, Qr, Qtheta, Qrdot, T, Hy, false_rate_beta, Pd);
-            weight_kp(k, p) = weight_kp(k, p) * weight_pmk;
         end
     end
     %%
@@ -179,11 +186,4 @@ function error = fpf(k, A, S_kpi)
     end
     weight_kp(k,:) = temp_wei(1, :);
     S_kpi(k, :, :, :) = temp_S(1, :, :, :);
-    for i = 1:T
-        figure;
-        plot(x_target(:, i), y_target(:, i), 'g*-', x_target_hat(:, i), y_target_hat(:, i), 'r+-');
-        axis([-30000 30000 -30000 30000]);
-        figure;
-        plot(x_target(:, i) - x_target_hat(:, i), y_target(:, i) - y_target_hat(:, i), 'g*-');
-    end
 end
