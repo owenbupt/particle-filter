@@ -94,6 +94,7 @@ Qtheta = 1;
 false_mean = 1;
 weight_kp = ones(K, N);
 
+% caculate the real location and v
 for k = 1:K-1
     for i = 1:T
         a = randn;
