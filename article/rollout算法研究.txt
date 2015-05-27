@@ -1,0 +1,69 @@
+# rollout算法研究
+Rollout algorithms have demonstrated excellent performance on a variety of dynamic and discrete optimization problems. Interpreted as an approximate dynamic programming algorithm, a rollout al- gorithm estimates the value-to-go at each decision stage by simulating future events while following a greedy policy, referred to as the base policy. While in many cases rollout algorithms are guaranteed to perform as well as their base policies, there have been few theoretical results showing additional improve- ment in performance. In this paper we perform a probabilistic analysis of the subset sum problem and knapsack problem, giving theoretical evidence that rollout algorithms perform strictly better than their base policies. Using a stochastic model from the existing literature, we analyze two rollout methods that we refer to as the consecutive rollout and exhaustive rollout, both of which employ a simple greedy base policy. For the subset sum problem, we prove that after only a single iteration of the rollout algorithm, both methods yield at least a 30% reduction in the expected gap between the solution value and capacity, relative to the base policy. Analogous results are shown for the knapsack problem.
+We use a stochastic model directly from the literature that has been used to study a wide variety of greedy
+algorithms for the subset sum problem [5]. This model is extended in a natural manner for our analysis of the knapsack problem. We analyze two rollout techniques that we refer to as the consecutive rollout and the exhaustive rollout, both of which use the same base policy. The first algorithm sequentially processes the items and at each iteration decides if the current item should be added to the knapsack. During each iteration of the exhaustive rollout, the algorithm decides which one of the available items should be added to the knapsack. The base policy is a simple greedy algorithm that adds items until an infeasible item is encountered
+## consecutive rollout
+- 算法思路
+The Consecutive-Rollout algorithm is shown in Algorithm 2. The algorithm takes as input a sequence of item weights wI and capacity b, and makes calls to Blind-Greedy as a subroutine. At iteration i, the algorithm calculates the value (U+) of adding item i to the solution and using Blind-Greedy on the
+remaining items, and the value (U−) of not adding the item to the solution and using Blind-Greedy thereafter. The item is then added to the solution only if the former valuation (U+) is larger.
+Algorithm 2 Consecutive-Rollout Input: Item weight sequence wI where I = ?1, . . . ,n?, capacity b. Output: Feasible solution sequence S, value U.
+1: Initialize S ←??, remaining item sequence I ←I, b←b, U ←0. 2: for i = 1 to n (each item) do
+3:
+Estimate the value of adding item i, (·, U+) = Blind-Greedy(I, b).
+4:
+Estimate the value of skipping item i, (·, U−) = Blind-Greedy(I \ ?i?, b).
+5:
+if U+ > U− (estimated value of adding the item is larger) then
+6:
+Add item i to solution sequence, S ←S : ?i?.
+7:
+Update remaining capacity, b←b−wi, and value, U ←U +pi.
+8:
+end if
+9:
+Remove item i from the remaning item sequence, I ←I \ ?i?.
+10: end for 11: Return S, U.
+We only focus on the result of the first iteration of the algorithm; bounds from the first iteration are
+valid for future iterations3. A single iteration of Consecutive-Rollout effectively takes the best of two solutions, the one obtained by Blind-Greedy and the solution obtained from using Blind-Greedy after
+removing the first item. Let V∗(n) denote the gap obtained by a single iteration of the rollout algorithm for the subset sum problem with n items under the stochastic model.
+- 边界分析
+
+## exhaustive rollout
+- 算法思路
+
+
+
+The Exhaustive-Rollout algorithm is shown in Algorithm 3. It takes as input a sequence of item weights wI and capacity b. At each iteration, indexed by t, the algorithm considers all items in the available sequence I. It calculates the value obtained by moving each item to the front of the sequence and applying the Blind- Greedy algorithm. The algorithm then adds the item with the highest estimated value (if it exists) to the solution. We implicitly assume a consistent tie-breaking method, such as giving preference to the item with the lowest index. The next iteration then proceeds with the remaining sequence of items. We again only consider the first iteration, which tries using Blind-Greedy after moving each item to
+the front of the sequence, and takes the best of these solutions. This gives an upper bound for the subset sum gap and a lower bound on the knapsack problem gain following from additional iterations. For the
+subset sum problem, let V∗(n) denote the gap obtained after a single iteration of Exhaustive-Rollout on the stochastic model with n items. We have the following bounds.
+
+Algorithm 3 Exhaustive-Rollout
+Input: Item weight sequence wI where I = ?1, . . . ,n?, capacity b. Output: Feasible solution sequence S, value U.
+1: Initialize S ←??, I ←I, b←b, U ←0. 2: for t = 1 to n do 3:
+for i ∈ I (each item in remaning item sequence) do
+4:
+Let Ii denote the sequence I with i moved to the first position.
+5:
+Estimate value of sequence, (·,Ui) = Blind-Greedy(wIi
+, b).
+6:
+end for
+7:
+if maxi Ui > 0 then
+8:
+Determine item with max estimated value, i∗ ←argmaxi Ui.
+9:
+Add item i∗ to solution sequence, S ←S : ?i∗?, I ←I \ ?i∗?.
+10:
+Update remaining capacity, b←b−wi, and value, U ←U +pi.
+11:
+end if
+12: end for 13: Return S, U.
+0.4
+- 边界分析
+
+
+We have shown strong performance bounds for both the consecutive rollout and exhaustive rollout techniques on the subset sumproblem and knapsack problem. These results hold after only a single iteration and provide bounds for additional iterations. Simulation results indicate that these bounds are very close in comparison with realized performance of a single iteration. We presented results characterizing the asymptotic behavior (asymptotic with respect to the total number of items) of the expected performance of both rollout techniques for the two problems.
+
+An interesting direction in future work is to consider a second iteration of the rollout algorithm. The
+worst-case analysis of rollout algorithms for the knapsack problem in [4] shows that running one iteration results in a notable improvement, but it is not possible to guarantee additional improvement with more iterations for the given base policy. This behavior is generally not observed in practice [2], and is not a limitation in the average-case scenario. A related topic is to still consider only the first iteration of the rollout algorithm, but with a larger lookahead length (e.g. trying all pairs of items for the exhaustive rollout, rather than just each item individually). Finally, it is desirable to have theoretical results for more complex problems. Studying problems with multidimensional state space is appealing since these are the types of problems where rollout techniques are often used and perform well in practice. In this direction, it would be useful to consider problems such as the bin packing problem, the multiple knapsack problem, and the multidimensional knapsack problem.
