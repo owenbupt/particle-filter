@@ -1,0 +1,2 @@
+Your WeBid password salt: ea21801d921d6525b891206931e6c675 You should make note of this random code, it is used to secure your users passwords. It is stored in your config file if you accidently delete this file and don't have this code all your users will have to reset their passwords
+Remove the install folder from your server. You will not be able to use WeBid until you do this.

@@ -7,7 +7,7 @@ clear all;
 clc;
 Ts = 2;
 % Sampling time
-Times = 30;
+Times = 300;
 % Sampling numbers
 K = Times / Ts;
 T = 2; % targets numbers
@@ -48,11 +48,11 @@ y_sen = [y_sen0, y_sen1, y_sen2, y_sen3];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % sensors sensible area
-R_min = 25000;
-R_max = 100000;
+R_min = 0;
+R_max = 10099000;
 
 % the detection probability
-Pd = 0.8;
+Pd = 1;
 %%%%%%%%%%%%%change it to 1 for debug
 
 % false alarm probability
@@ -122,7 +122,7 @@ for p = 1:N
 end
 
 for k = 2:K
-    disp(k);
+    % disp(k);
     % Prediction
     for p = 1:N
         temp = zeros(4, T);
@@ -164,7 +164,7 @@ for k = 2:K
             else
                 Hy = Hy4;
             end
-                    
+        %%%problems here, there are two targets, but only one particle weight
             weight_pmk = weight_cal(S_kpi, x_sen, y_sen, p, m, k, Qr, Qtheta, Qrdot, T, Hy, false_rate_beta, Pd);
             weight_kp(k, p) = weight_kp(k, p) * weight_pmk;
         end
@@ -196,7 +196,7 @@ for k = 2:K
         end
     end
     
-    weight_kp(k,:) = temp_wei(1, :);
+    weight_kp(k,:) = temp_wei(1, :) ./ sum(temp_wei(1,:));
     S_kpi(k, :, :, :) = temp_S(1, :, :, :);
     
 end
@@ -205,5 +205,5 @@ for i = 1:T
     plot(x_target(:, i), y_target(:, i), 'g*-', x_target_hat(:, i), y_target_hat(:, i), 'r+-');
     axis([-30000 30000 -30000 30000]);
     figure;
-    plot(x_target(:, i) - x_target_hat(:, i), y_target(:, i) - y_target_hat(:, i), 'g*-');
+    plot(1:K, x_target(:, i) - x_target_hat(:, i), 1:K, y_target(:, i) - y_target_hat(:, i));
 end
