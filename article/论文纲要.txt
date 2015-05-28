@@ -12,23 +12,31 @@
 ## 技术路线
 ## 论文组织
 
-# rollout算法研究
-## consecutive rollout
-- 算法思路
+# 调度算法研究
 
-- 边界分析
+## 动态规划算法
 
-## exhaustive rollout
-- 算法思路
-- 边界分析
+## 贪婪算法
+
+## rollout算法研究
+###consecutive rollout
+ - 算法思路
+
+  - 边界分析
+
+###exhaustive rollout
+ - 算法思路
+
+  - 边界分析
 
 # 粒子滤波算法研究
 ## 基本算法
 ## 重要性采样
 ## 公式化
-## 误差来源
+
 
 # POMDP建模
 ## 具体过程
 ## 联合密度分布
+
 # 仿真实验结果
