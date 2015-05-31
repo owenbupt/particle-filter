@@ -21,5 +21,8 @@ function OneStepCost = one_step_cost(k, A_km, x_target_hat, y_target_hat, x_targ
         % the absolute value of difference between A(k) and A(k - 1) means the 
         % action changed
     end
+%     disp(sensor_cost);
+    
     OneStepCost = alpha * error_cost / 10^6 + sensor_cost;
+%     disp(OneStepCost);
 end

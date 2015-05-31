@@ -7,7 +7,7 @@ clc;
 % sampling interval Ts
 Ts = 2;
 % Sampling time
-Times = 300;
+Times = 10;
 % Sampling numbers
 K = Times / Ts;
 T = 2; % targets numbers
@@ -125,6 +125,7 @@ for k = 2:K
     for t = 1:T
         dis_min = exp(100000); 
         for m = 1:M
+            % some problems here for the distance here
             dis_tm = r(x_sen(m), y_sen(m), x_target(t), y_target(t));
             if dis_tm < dis_min
                 chosn_m(t) = m;
