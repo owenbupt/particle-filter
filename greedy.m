@@ -7,7 +7,7 @@ clc;
 % sampling interval Ts
 Ts = 2;
 % Sampling time
-Times = 30;
+Times = 300;
 % Sampling numbers
 K = Times / Ts;
 T = 2; % targets numbers
@@ -48,11 +48,11 @@ y_sen = [y_sen0, y_sen1, y_sen2, y_sen3];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % sensors sensible area
-R_min = 25000;
-R_max = 100000;
+R_min = 0;
+R_max = 100000000;
 
 % the detection probability
-Pd = 0.8;
+Pd = 1;
 %%%%%%%%%%%%%change it to 1 for debug
 
 % false alarm probability
@@ -116,6 +116,7 @@ end
 % A = zeros(10, 4);
 Achose = zeros(1, 4);
 A_km = zeros(K, M);
+total_cost = 0;
 % for i = 1:10
 %     a = dec2bin(i, 4);
 %     A(i,:) = a;
@@ -133,7 +134,7 @@ for k = 2:K
         Achose(chosn_m(t)) = 1;
         A_km(k, :) = Achose(1, :);
     end
-    [x_target_hat, vx_target_hat, y_target_hat, vy_target_hat S_kpi weight_kp] = fpf(k, Achose, S_kpi, weight_kp, x_target, vx_target, y_target, vy_target, x_target_hat, vx_target_hat, y_target_hat, vy_target_hat);
+    [x_target_hat, vx_target_hat, y_target_hat, vy_target_hat, S_kpi, weight_kp] = fpf(k, Achose, S_kpi, weight_kp, x_target, vx_target, y_target, vy_target, x_target_hat, vx_target_hat, y_target_hat, vy_target_hat);
     total_cost = total_cost + one_step_cost(k, A_km, x_target_hat, y_target_hat, x_target, y_target);
 end
 
@@ -144,7 +145,7 @@ for i = 1:T
     plot(x_target(:, i), y_target(:, i), 'g*-', x_target_hat(:, i), y_target_hat(:, i), 'r+-');
     axis([-30000 30000 -30000 30000]);
     figure;
-    plot(x_target(:, i) - x_target_hat(:, i), y_target(:, i) - y_target_hat(:, i), 'g*-');
+    plot(1:K, x_target(:, i) - x_target_hat(:, i), 1:K, y_target(:, i) - y_target_hat(:, i));
 end
 
 

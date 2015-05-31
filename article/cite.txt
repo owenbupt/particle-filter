@@ -1,0 +1,72 @@
+调度算法：
+[6] Patterson J H, Huber W D. A horizon-varying, zero-one approach to projectscheduling. Management Science, 1974, 20(6): 990-998.
+[7] Carruthers J A, Battersby A. Advances in critical path methods. OR, 1966: 359-380.
+[8] Patterson J H. A comparison of exact approaches for solving the multiple constrainedresourceproject schedulingproblem. Management science, 1984, 30(7): 854-867.
+[9] Demeulemeester E, Herroelen W. A branch-and-bound procedure for the multipleresource-constrained project scheduling problem.Management science, 1992, 38(12):1803-1818.
+[10]Davis L. Job shop scheduling with genetic algorithms. In: Proceedings of the 1stinternational conference on genetic algorithms. L. Erlbaum Associates Inc., 1985:136-140.
+[11]Hartmann S. A competitive genetic algorithm for resource‐constrained projectscheduling. Naval Research Logistics (NRL), 1998, 45(7): 733-750.
+[12]刘士新, 王梦光，唐加福. 求解项目调度中资源水平问题的近似算法.系统工程学报,2002,17(4):296-302.
+[13]杨宏利. 基于遗传算法的资源约束型项目调度问题的优化
+[硕士学位论文]. 上海:上海交通大学, 2007.
+[14]Dorigo M, Maniezzo V, Colorni A, et al. Positive feedback as a search strategy.1991.
+[15]Merkle D, Middendorf M, Schmeck H. Ant colony optimization forresource-constrained project scheduling. IEEE Transactions on EvolutionaryComputation,2002,6(4):333-346
+[16]Eberhart R, Kennedy J. A new optimizer using particle swarm theory. In:Proceedings of the Sixth International Symposium onIEEE. Australia Perth ,1995:39-43.
+[17]Zhang H, Li X, Li H, et al. Particle swarm optimization-based schemes forresourceconstrained project scheduling. Automation in Construction, 2005, 14(3):393-404 .
+[18]Steinbrunn M ,Moerkotte G, Kemper A. Heuristic and Ran2 domized Optimizationfor the Join Ordering Problem . The VLDB Journal , 1997 , 6 (3) :8 -17.
+[19]Boctor F F. Resource-constrained project scheduling by simulated annealing.International Journal of Production Research, 1996, 34(8): 2335-2351.
+[20]Cho J H, Kim Y D. A simulated annealing algorithm for resource constrained project scheduling problems . Journal of Operational Research Society,1997,48(7):736-744.
+[21]Nonobe K, Ibaraki T. Formulation and tabu search algorithm for the resourceconstrained project scheduling problem(RCPSP).Essays and Surveys in Metaheuristics. Springer US,2002:557-588.
+[22] Kolisch R. Serial and parallel resource-constrained project scheduling methods revisited: Theory and Computation. European Journal of Operational Research, 1996,90(2):320-333
+[23] 方晨, 王凌. 资源约束项目调度研究综述. 控制与决策,2010,25(5):641-656.
+[24]Hartmann S, Kolisch R. Experimental evaluation of state-of-the-art heuristics for the resource-constrained project scheduling problem. European Journal of Operational Research, 2000, 127(2): 394-407.
+[25] Cooper D F. Heuristics for scheduling resource-constrained projects: Anexperimental investigation. Management Science, 1976, 22(11): 1186-1194.
+[26] 刘士新, 王梦光，唐加福. 资源受限工程调度问题的优化方法综述.控制与决策,2001,16(1):647-651.
+[27] 邓林义, 林焰, 金朝光. 采用优先规则的粒子群算法求解 RCPSP. 计算机工程与应用,2009,45(10):40-44.
+
+POMDP
+[5] 桂林，武小悦. 部分可观测马尔可夫决策过程算法综述[J]. 系统工程与电子技术, 2008,30 (6): 1058-1064.
+[6] Pineau J, Gordon G, Thrun S. Point-based value iteration: An anytime algorithmfor POMDPs[C]. in: Proceedings of the International Joint Conferences onArtificial Intelligence(IJCAI), Acapulco, Mexico, 2003, 1025-1032.
+[7] Smith T, Simmons R. Heuristic search value iteration for POMDPs. [C]. in:Proceedings of the Uncertainty in Artificial Intelligence(UAI). Virginia, UnitedStates. 2004.,520-527.
+[8] Spaan M T J, Vlassis N. Perseus: Randomized point-based value iteration forPOMDPs.[J]. Journal of Artificial Intelligence Research(JAIR), 2005, 24: 195-220.
+[9] Paquet S, Chaib-draa B, Ross S. Hybrid POMDP algorithms[C]. in: Proceedings ofthe Multi-Agent Sequential Decision Making in Uncertain Domains (MSDM-06).2006.
+[10] Ross S, Chaib-draa B. Aems: An anytime online search algorithm for approximatepolicy refinement in large POMDPs[C]. in: Proceedings of the International JointConferences on Artificial Intelligence(IJCAI). San Francisco, CA, USA. 2007,2592--2598.
+[11] Shani G, Brafman R, Shimony S. Forward search value iteration for pomdps. [C].in: Proceedings of the International Joint Conferences on ArtificialIntelligence(IJCAI). San Francisco, CA, USA .2007, 2619-2624.
+[12] Ji S, Parr R, Li H, Liao X, et al. Point-based policy iteration. [J]. AAAI, 2007, 2:1243-1249.
+[13] Kurniawati H, Wee D H, Lee S. SARSOP: Efficient Point-Based POMDP Planningby Approximating Optimally Reachable Belief Spaces [J]. Robotics: Science &Systems,.2008.
+[14] Ross S, Paquet S, Chaib-draa B. Online Planning Algorithms for POMDPs[J].Journal of Artificial Intelligence Research(JAIR), 2008,(32): 663-704.
+[15] Li X, Cheung W. POMDP Compression and Decomposition via Belief StateAnalysis[D]. Hong Kong Baptist University. 2009.
+[16] Erez T, Smart W D. A Scalable Method for Solving High-Dimensional ContinuousPOMDPs Using Local Approximation [C]. in: Proceedings of the InternationalConference on Automated Planning and Scheduling (ICAPS).2010. 160-167.
+[17] Borera E C. Pruning POMDP Linear Functions with the Kaczmarz IterativeMethod [D]. Texas Tech University. MASTER OF SCIENCES, 2010.
+[18] Xin Li, Cheung, W.K., Jiming Liu. Improving POMDP Tractability via BeliefCompression and Clustering[J]. System, man and Cybernetics. 2010, 40(1):125-136.
+[19] Enlu Zhou, Fu M.C., Marcus, S.I. Solving Continuous-State POMDPs via DensityProjection[J]. Automatic Control. 2010, 55(5): 1101 - 1116.
+[20] Undurti A. How J.P. An Online Algorithm for Constrained POMDPs[C]. in:Proceedings of the International Conference on Robotics and Automation(ICRA).2010, 3966 - 3973.
+[21] Cassandra A R. A survey of POMDP applications [C]. AAAI Fall Symposium onPlanning with Partially Observable Markov Decision Processes, 1998, 17-24.
+[22] Zhang S, Sridharan M. Vision-based Scene Analysis on Mobile Robots usingLayered POMDPs [C]. in: Proceedings of the International Conference onAutomated Planning and Scheduling (ICAPS).2010.
+[23] Sylvie C.W. Ong S W P, David Hsu, Wee Sun Lee. Planning under Uncertainty forRobotic Tasks with Mixed Observability[J]. International Jounral of RoboticsResearch, 2010, 29(8): 1053-1068.
+
+粒子滤波
+1 J.L. Zhang, J.S. Liu. A New Sequential Importance Sampling Method and its Application to the Two-Dimensional Hydrophobic-Hydrophilic Model. Journal of Chemical Physics. 2002, 117(7):3492~3498
+2 C.R. Rao, P.K. Pathak and V.I. Koltchinskii. Bootstrap by Sequential Resampling. Journal of Statistical Planning and Inference. 1997, 64(2):257~281
+3 N.J. Gordon, D.J. Salmond, and A.F.M. Smith. Novel Approach to Nonlinear/Non-Gaussian Bayesian State Estimation. IEEE Proceedings-F. 1993, 140(2):107~111
+4 B. Efron and R.J. Tibshirani. An Introduction to the Bootstrap. Chapman & Hall,1993:34~69
+5 J. Carpenter, P. Clifford, and P. Fearnhead. An improved particle filter for non-linear problems. IEE Proc., Radar Sonar Navigation. 1999, 146:2~7
+6 J.S. Liu, R. Chen. Sequential Monte-Carlo methods for dynamic systems. J of the American Statistical Association. 1998, 93(443):1032~1044
+7 A. Doucet, S.J. Godsill, C. Andrieu. On sequential simulation-based methods for Baysian filtering. Statistics and Computing. 2000, 10(3):197~208
+8 C. Cirincione and G. A. Gurrieri. A Good Overview of Resampling and Related Methods. Social Science Computer Review. 1997, 15(1):83~97
+9 B. Minaei-Bidgoli, A. Topchy and W. F. Punch. A Comparison of Resampling Methods for Clustering Ensembles. Proceedings of the International Conference on Artificial Intelligence, IC-AI'04. Las Vegas, NV, United States, 2004. CSREA Press, Bogart, GA 30622, United States, 2004:939~945
+10 M. Bolic, P.M. Djuric and S. Hong. Resampling Algorithms and Architectures for Distributed Particle Filters. IEEE Transactions on Signal Processing. 2005, 53(7):2442~2450
+11 M. Bolic, P.M. Djuric and S. Hong. Resampling Algorithms for Particle Filters: A Computational Complexity Perspective. Eurasip Journal on Applied Signal Processing. 2004, 2004(15):2267~2277
+12 W. Li, S. Mazumdar, V.C. Arena and N. Sussman. A Resampling Approach for Adjustment in Prediction Models for Covariate Measurement Error. Computer Methods and Programs in Biomedicine. 2005, 77(3):199~207
+13 J. Christoffersson. A Resampling Method for Regression Models with Serially Correlated Errors. Computational Statistics & Data Analysis. 1997, 25(1):43~53
+14 D. Malzahn, M. Opper. An Approximate Analytical Approach to Resampling Averages. Journal of Machine Learning Research. 2004, 4(6):1151~1173
+15 夏克寒, 许化龙, 张朴睿. 粒子滤波的关键技术及应用. 电光与控制. 2005, 12(6):1~4
+16 柴霖, 袁建平, 罗建军, 方群, 岳晓奎. 非线性估计理论的最新进展. 宇航学报. 2005, 26(3):380~383
+17 胡士强, 敬忠良. 粒子滤波算法综述. 控制与决策. 2005, 20(4):361~365
+18 李涛, 薛祖瑞, 胡小平. 一种使用非等权值粒子的确定性粒子滤波算法. 国防科技大学学报. 2004, 26(1):72~76
+19 雷明, 韩崇昭, 肖梅. 扩展卡尔曼粒子滤波算法的一种修正方法. 西安交通大学学报. 2005, 39(8):824~827
+20 李培华. 主动轮廓线跟踪的理论及算法研究. 哈尔滨工业大学博士论文.2002: 59~77
+21 宁华中 . 基于模型的行人跟踪 . 中国科学院研究生院硕士学位论文 .2003:67~85
+22 H.T. Hu, Z.L. Jing. An MCMC-Based Particle Filter for Tracking Target in Glint Noise Environment. Proceedings of the Seventh International Conference on Information Fusion. tockholm,Sweden,2004. International Society of Information Fusion,Fairborn,OH 45324,United States. 2004:922~927
+23 莫以为, 萧德云. 定性信号在混合状态与参数估计中的应用. 清华大学学报.2004, 44(10):1356~1359
+24 唐涛, 张涯辉, 黄永梅. 粒子滤波在被动定位跟踪中的运用. 仪器仪表学报.2005, 26(8):211~214
+25 胡洪涛, 敬忠良, 李安平, 胡士强. 非高斯条件下基于粒子滤波的目标跟踪.上海交通大学学报. 2004, 38(12):1997~1999

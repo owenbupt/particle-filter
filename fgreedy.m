@@ -6,7 +6,7 @@ function [greedy_cost] = fgreedy(k_start, Achose, S_kpi, weight_kp, x_target, vx
     % sampling interval Ts
     Ts = 2;
     % Sampling time
-    Times = 30;
+    Times = 300;
     % Sampling numbers
     K = Times / Ts;
     T = 2; % targets numbers
@@ -47,11 +47,11 @@ function [greedy_cost] = fgreedy(k_start, Achose, S_kpi, weight_kp, x_target, vx
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % sensors sensible area
-    R_min = 25000;
-    R_max = 100000;
+    R_min = 0;
+    R_max = 100000000;
 
     % the detection probability
-    Pd = 0.8;
+    Pd = 1;
     %%%%%%%%%%%%%change it to 1 for debug
 
     % false alarm probability

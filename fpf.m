@@ -47,8 +47,8 @@ function [x_target_hat, vx_target_hat, y_target_hat, vy_target_hat, S_kpi, weigh
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % sensors sensible area
-        R_min = 25000;
-        R_max = 100000;
+        R_min = 0;
+        R_max = 100000000;
 
         % the detection probability
         Pd = 0.8;
@@ -182,6 +182,6 @@ function [x_target_hat, vx_target_hat, y_target_hat, vy_target_hat, S_kpi, weigh
             end
         end
     end
-    weight_kp(k,:) = temp_wei(1, :);
+    weight_kp(k,:) = temp_wei(1, :) ./ sum(temp_wei(1,:));;
     S_kpi(k, :, :, :) = temp_S(1, :, :, :);
 end
