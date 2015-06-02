@@ -6,7 +6,7 @@ function [greedy_cost] = fgreedy(k_start, Achose, S_kpi, weight_kp, x_target, vx
     % sampling interval Ts
     Ts = 2;
     % Sampling time
-    Times = 10;
+    Times = 100;
     % Sampling numbers
     K = Times / Ts;
     T = 2; % targets numbers
@@ -47,11 +47,12 @@ function [greedy_cost] = fgreedy(k_start, Achose, S_kpi, weight_kp, x_target, vx
     %     A(i,:) = a;
     % end
     greedy_cost = 0;
+    chosn_m = zeros(1, T);
     for k = k_start:K
         for t = 1:T
             dis_min = exp(100000); 
             for m = 1:M
-                dis_tm = r(x_sen(m), y_sen(m), x_target(t), y_target(t));
+                dis_tm = r(x_sen(m), y_sen(m), x_target(k, t), y_target(k, t));
                 if dis_tm < dis_min
                     chosn_m(t) = m;
                     dis_min = dis_tm;

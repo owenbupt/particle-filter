@@ -7,7 +7,7 @@ clc;
 % sampling interval Ts
 Ts = 2;
 % Sampling time
-Times = 100;%cost=19.7846
+Times = 6;
 % Sampling numbers
 K = Times / Ts;
 T = 2; % targets numbers
@@ -113,38 +113,57 @@ for p = 1:N
 end
 
 
-% 10 alternatives for 1 or 2 sensors to track targets.
-A = zeros(10, 4);
-A_km = zeros(K, M);
+% A = zeros(10, 4);
 Achose = zeros(1, 4);
-for i = 1:10
-    A(i,:) = dec2bin(i, 4);
-end
-A = A - 48;
-total_cost = 0;
+A_km = zeros(K, M);
+chosn_m = zeros(1, T);
+Cost_record = zeros(1, 16^K);
+cost_index = 1;
+S_kpi_m = zeros(16^K, N, T, 4);
+weight_Kkp = zeros(16^K, K, N);
+% for i = 1:10
+%     a = dec2bin(i, 4);
+%     A(i,:) = a;
+% end
+temp_S_kpi = S_kpi;
 for k = 2:K
-    temp_choose = 0;
-    k_start = k;
-    per_cost_min = 100000000000000;
-    for i = 1:10
-        [greedy_cost] = fgreedy(k_start, A(i, :), S_kpi, weight_kp, x_target, vx_target, y_target, vy_target, x_target_hat, vx_target_hat, y_target_hat, vy_target_hat);
-        if greedy_cost < per_cost_min
-            per_cost_min = greedy_cost;
-            temp_choose = i;
+    for t = 1:16^(k - 2)
+        for m1 = 1:M
+            for m2 = 1:M
+                A_km(k, :) = 0;
+                A_km(k, m1) = 1;
+                A_km(k, m2) = 1;
+                if k ~= 2
+                    S_kpi(k-1,:,:,:) = S_kpi_m((t + 16^(k - 3)),:,:,:);
+                    weight_kp(k, :) = 1;
+                    [x_target_hat, vx_target_hat, y_target_hat, vy_target_hat, S_kpi, weight_kp] = fpf(k, A_km, S_kpi, weight_kp, x_target, vx_target, y_target, vy_target, x_target_hat, vx_target_hat, y_target_hat, vy_target_hat);
+                    Cost_record(1, cost_index) = Cost_record(1, t + floor(16^(k - 3))) + one_step_cost(k, A_km, x_target_hat, y_target_hat, x_target, y_target);
+                    
+                else
+                    S_kpi = temp_S_kpi;
+                    weight_kp(k, :) = 1;
+                    [x_target_hat, vx_target_hat, y_target_hat, vy_target_hat, S_kpi, weight_kp] = fpf(k, A_km, S_kpi, weight_kp, x_target, vx_target, y_target, vy_target, x_target_hat, vx_target_hat, y_target_hat, vy_target_hat);
+                    Cost_record(1, cost_index) = one_step_cost(k, A_km, x_target_hat, y_target_hat, x_target, y_target);
+                end
+%                 weight_kp(k,:) = weight_Kkp(cost_index, k, :);
+                S_kpi_m(cost_index,:,:,:) = S_kpi(k,:,:,:);
+                cost_index = cost_index + 1;
+                
+            end
         end
     end
-    A_km(k, :) = A(temp_choose, :);
-    Achose = A(temp_choose, :);
-    [x_target_hat, vx_target_hat, y_target_hat, vy_target_hat, S_kpi, weight_kp] = fpf(k, Achose, S_kpi, weight_kp, x_target, vx_target, y_target, vy_target, x_target_hat, vx_target_hat, y_target_hat, vy_target_hat);
-    total_cost = total_cost + one_step_cost(k, A_km, x_target_hat, y_target_hat, x_target, y_target);
-end
 
+end
+total_cost = min(Cost_record(1, cost_index - 16^(K-1):cost_index - 1));
 disp(total_cost);
 
-for i = 1:T
-    figure;
-    plot(x_target(:, i), y_target(:, i), 'g*-', x_target_hat(:, i), y_target_hat(:, i), 'r+-');
-    axis([-30000 30000 -30000 30000]);
-    figure;
-    plot(1:K, x_target(:, i) - x_target_hat(:, i), 1:K, y_target(:, i) - y_target_hat(:, i));
-end
+% for i = 1:T
+%     figure;
+%     plot(x_target(:, i), y_target(:, i), 'g*-', x_target_hat(:, i), y_target_hat(:, i), 'r+-');
+%     axis([-30000 30000 -30000 30000]);
+%     figure;
+%     plot(1:K, x_target(:, i) - x_target_hat(:, i), 1:K, y_target(:, i) - y_target_hat(:, i));
+% end
+
+
+

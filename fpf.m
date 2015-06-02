@@ -6,9 +6,7 @@ function [x_target_hat, vx_target_hat, y_target_hat, vy_target_hat, S_kpi, weigh
         % sampling interval Ts 
         Ts = 2;
         % Sampling time
-        Times = 30;
         % Sampling numbers
-        K = Times / Ts;
         T = 2; % targets numbers
         M = 4; % sensors numbers
 
@@ -16,30 +14,16 @@ function [x_target_hat, vx_target_hat, y_target_hat, vy_target_hat, S_kpi, weigh
         x_sen0 = 0;
         y_sen0 = 0;
 
-        sigma_r_sen0 = 500;
-        sigma_theta_sen0 = 2;
-        sigma_rdot_sen0 = 6;
-
         x_sen1 = -30000;
         y_sen1 = 0;
-
-        sigma_r_sen1 = 500;
-        sigma_theta_sen1 = 2;
-        sigma_rdot_sen1 = 6;
 
         x_sen2 = 15000;
         y_sen2 = 26000;
 
-        sigma_r_sen2 = 500;
-        sigma_theta_sen2 = 2;
-        sigma_rdot_sen2 = 6;
 
         x_sen3 = 15000;
         y_sen3 = -26000;
 
-        sigma_r_sen3 = 250;
-        sigma_theta_sen3 = 1;
-        sigma_rdot_sen3 = 3;
 
 
         x_sen = [x_sen0, x_sen1, x_sen2, x_sen3];
@@ -55,7 +39,7 @@ function [x_target_hat, vx_target_hat, y_target_hat, vy_target_hat, S_kpi, weigh
         %%%%%%%%%%%%%change it to 1 for debug
 
         % false alarm probability
-        Pf = 0.47;
+    
         % false alarm rate
         false_rate_beta = 1.0 * 10 ^ -8;
         N = 200;
@@ -120,7 +104,6 @@ function [x_target_hat, vx_target_hat, y_target_hat, vy_target_hat, S_kpi, weigh
     for m = 1:M
         if Achose(m) == 1
             FalseArr = false_alarm(R_min, R_max, false_mean);
-            [false_num, no_use] = size(FalseArr);
 
             Hy = detected(x_target, y_target, vx_target, vy_target, x_sen, y_sen, k, m, T, Pd, R_min, R_max, FalseArr);
             if m == 1
@@ -182,6 +165,6 @@ function [x_target_hat, vx_target_hat, y_target_hat, vy_target_hat, S_kpi, weigh
             end
         end
     end
-    weight_kp(k,:) = temp_wei(1, :) ./ sum(temp_wei(1,:));;
+    weight_kp(k,:) = temp_wei(1, :) ./ sum(temp_wei(1,:));
     S_kpi(k, :, :, :) = temp_S(1, :, :, :);
 end

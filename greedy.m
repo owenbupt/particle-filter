@@ -117,6 +117,7 @@ end
 Achose = zeros(1, 4);
 A_km = zeros(K, M);
 total_cost = 0;
+chosn_m = zeros(1, T);
 % for i = 1:10
 %     a = dec2bin(i, 4);
 %     A(i,:) = a;
@@ -126,7 +127,7 @@ for k = 2:K
         dis_min = exp(100000); 
         for m = 1:M
             % some problems here for the distance here
-            dis_tm = r(x_sen(m), y_sen(m), x_target(t), y_target(t));
+            dis_tm = r(x_sen(m), y_sen(m), x_target(k, t), y_target(k, t));
             if dis_tm < dis_min
                 chosn_m(t) = m;
                 dis_min = dis_tm;
