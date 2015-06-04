@@ -7,7 +7,7 @@ clc;
 % sampling interval Ts
 Ts = 2;
 % Sampling time
-Times = 10;
+Times = 300;
 % Sampling numbers
 K = Times / Ts;
 T = 2; % targets numbers
